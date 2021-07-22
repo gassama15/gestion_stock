@@ -6,5 +6,6 @@ if (!isset($_SESSION['type'])) {
 }
 
 include 'header.php';
+include 'footer.php';
 
 ?>
