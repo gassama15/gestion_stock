@@ -126,6 +126,31 @@ $(document).ready(function() {
             }
         })
     })
+    $(document).on('click', '.update', function() {
+        var user_id = $(this).attr("id");
+        var btn_action = 'fetch_single';
+        $.ajax({
+            url: "user_action.php",
+            method: "POST",
+            data: {
+                user_id: user_id,
+                btn_action: btn_action
+            },
+            dataType: "json",
+            success: function(data) {
+                $('#userModal').modal('show');
+                $('#user_name').val(data.user_name);
+                $('#user_email').val(data.user_email);
+                $('.modal-title').html(
+                    '<i class="fas fa-pencil-square-o"></i> Modification Utilisateur'
+                );
+                $('#user_id').val(user_id);
+                $('#action').val('Modifier');
+                $('#btn_action').val('Modifier');
+                $('#user_password').attr('required', false);
+            }
+        })
+    })
 });
 </script>
 
