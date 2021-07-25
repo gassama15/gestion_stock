@@ -76,6 +76,26 @@ if (isset($_POST['btn_action'])) {
             echo 'Utilisateur modifié avec succés';
         }
     }
+
+    if ($_POST['btn_action'] == 'supprimer') {
+        $status = 'Active';
+        if ($_POST['status'] == 'Active') {
+            $status = 'Inactive';
+        }
+        $query = "
+        UPDATE user_details SET user_status = :user_status WHERE user_id = :user_id
+        ";
+        $statement = $connect->prepare($query);
+        $statement->execute([
+            'user_status' => $status,
+            'user_id' => $_POST['user_id'],
+        ]);
+        $result = $statement->fetchAll();
+        if (isset($result)) {
+            echo 'Statut de l\'utilisateur est maintenant ' .
+                ($status == 'Inactive' ? 'Inactif' : 'Actif');
+        }
+    }
 }
 
 ?>

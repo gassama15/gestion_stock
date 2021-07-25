@@ -6,6 +6,10 @@ if (!isset($_SESSION['type'])) {
     header('Location:login.php');
 }
 
+if ($_SESSION['type'] != 'master') {
+    header('Location:index.php');
+}
+
 include_once 'header.php';
 ?>
 
@@ -150,7 +154,31 @@ $(document).ready(function() {
                 $('#user_password').attr('required', false);
             }
         })
-    })
+    });
+
+    $(document).on('click', '.delete', function() {
+        var user_id = $(this).attr("id");
+        var status = $(this).data("status");
+        var btn_action = "supprimer";
+        if (confirm("Êtes vous sûr(e) de vouloir supprimer?")) {
+            $.ajax({
+                url: "user_action.php",
+                method: "POST",
+                data: {
+                    user_id: user_id,
+                    status: status,
+                    btn_action: btn_action
+                },
+                success: function(data) {
+                    $('#alert_action').fadeIn().html('<div class="alert alert-info">' +
+                        data + '</div>');
+                    userdataTable.ajax.reload();
+                }
+            })
+        } else {
+            return false;
+        }
+    });
 });
 </script>
 
