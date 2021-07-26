@@ -28,7 +28,8 @@ include_once 'header.php';
                 </div>
                 <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
                     <div class="row text-right">
-
+                        <button type="button" name="add" id="add_button" data-toggle="modal"
+                            data-target="#categoryModal" class="btn btn-success btn-xs">Ajouter</button>
                     </div>
                 </div>
                 <div style="clear:both"></div>
@@ -53,8 +54,57 @@ include_once 'header.php';
         </div>
     </div>
 </div>
+<div id="categoryModal" class="modal fade">
+    <div class="modal-dialog">
+        <form method="post" id="category_form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><i class="fas fa-plus"></i> Ajouter Catégorie</h4>
+                </div>
+                <div class="modal-body">
+                    <label>Entrer le nom de catégorie</label>
+                    <input type="text" name="category_name" id="category_name" class="form-control" required>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="category_id" id="category_id">
+                    <input type="hidden" name="btn_action" id="btn_action">
+                    <input type="submit" name="action" id="action" class="btn btn-info">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <script>
 $(document).ready(function() {
+
+    $('#add_button').click(function() {
+        $('#category_form')[0].reset();
+        $('.modal-title').html("<i class='fas fa-plus'></i> Ajout Catégorie");
+        $('#action').val('Ajouter');
+        $('#btn_action').val('Ajouter');
+    });
+
+    $(document).on('submit', '#category_form', function(e) {
+        e.preventDefault();
+        $('#action').attr('disabled', 'disabled');
+        var form_data = $(this).serialize();
+        $.ajax({
+            url: "category_action.php",
+            method: "POST",
+            data: form_data,
+            success: function(data) {
+                $('#category_form')[0].reset();
+                $('#categoryModal').modal('hide');
+                $('#alert_action').fadeIn().html('<div class="alert alert-success">' +
+                    data + '</div>');
+                $('#action').attr('disabled', false);
+                categorydataTable.ajax.reload();
+            }
+        });
+    })
+
     var categorydataTable = $('#category_data').DataTable({
         'processing': true,
         'serverSide': true,
