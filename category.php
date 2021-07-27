@@ -103,7 +103,31 @@ $(document).ready(function() {
                 categorydataTable.ajax.reload();
             }
         });
-    })
+    });
+
+    $(document).on('click', '.update', function() {
+        var category_id = $(this).attr("id");
+        var btn_action = 'fetch_single';
+        $.ajax({
+            url: "category_action.php",
+            method: "POST",
+            data: {
+                category_id: category_id,
+                btn_action: btn_action
+            },
+            dataType: "json",
+            success: function(data) {
+                $('#categoryModal').modal('show');
+                $('#category_name').val(data.category_name);
+                $('.modal-title').html(
+                    '<i class="fas fa-pencil-square-o"></i> Modification Catégorie'
+                );
+                $('#category_id').val(category_id);
+                $('#action').val('Modifier');
+                $('#btn_action').val('Modifier');
+            }
+        });
+    });
 
     var categorydataTable = $('#category_data').DataTable({
         'processing': true,
@@ -119,7 +143,33 @@ $(document).ready(function() {
         }],
         "pageLength": 25
     });
-})
+
+    $(document).on('click', '.delete', function() {
+        var category_id = $(this).attr('id');
+        var status = $(this).data("status");
+        var btn_action = 'Supprimer';
+        if (confirm("Êtes vous sûr(e) de vouloir supprimer?")) {
+            $.ajax({
+                url: "category_action.php",
+                method: "POST",
+                data: {
+                    category_id: category_id,
+                    status: status,
+                    btn_action: btn_action
+                },
+                success: function(data) {
+                    $('#alert_action').fadeIn().html(
+                        '<div class="alert alert-info">' +
+                        data + '</div>'
+                    );
+                    categorydataTable.ajax.reload();
+                }
+            });
+        } else {
+            return false;
+        }
+    });
+});
 </script>
 
 <?php include_once 'footer.php';
